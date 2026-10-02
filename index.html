@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>100개 중 1개 당첨</title>
+<style>
+:root{--bg:#fff7f9;--fg:#6b4455;--cell:#ffe9ef;--lose:#fff;--mute:#d9a9ba;--win:#ff8fb1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a2025;--fg:#f6dbe5;--cell:#3b2c33;--lose:#2a2025;--mute:#8a6575;--win:#ff8fb1}}
+:root[data-theme="dark"]{--bg:#2a2025;--fg:#f6dbe5;--cell:#3b2c33;--lose:#2a2025;--mute:#8a6575;--win:#ff8fb1}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",ui-rounded,sans-serif;padding:24px 16px;max-width:520px;margin-inline:auto;text-align:center}
+h1{font-size:20px;font-weight:600;margin:8px 0 4px}
+.sub{font-size:14px;color:var(--mute);margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.c{aspect-ratio:1;border:0;border-radius:28%;background:linear-gradient(160deg,#ffd3e0,#ffb3cc);color:#fff;font:inherit;font-size:10px;padding:0;cursor:pointer;box-shadow:inset 0 2px 3px rgba(255,255,255,.7),inset 0 -3px 4px rgba(255,120,160,.35),0 2px 4px rgba(255,143,177,.3);transition:transform .1s}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .c{background:linear-gradient(160deg,#6b4455,#54343f)}}
+:root[data-theme="dark"] .c{background:linear-gradient(160deg,#6b4455,#54343f)}
+.c:active{transform:scale(.92)}
+.c.lose{background:var(--lose);color:var(--mute);cursor:default;box-shadow:none}
+.c.win{background:linear-gradient(160deg,#ff9fbd,#ff6f9c);color:#fff;font-size:11px;font-weight:700}
+.msg{margin-top:22px;font-size:16px;min-height:24px}
+button.reset{margin-top:14px;border:0;background:var(--cell);color:var(--fg);padding:10px 22px;border-radius:999px;font:inherit;font-size:14px}
+</style>
+</head>
+<body>
+<h1>100개 중 1개 당첨</h1>
+<div class="sub">하나를 골라보세요</div>
+<div class="grid" id="grid"></div>
+<div class="msg" id="msg"></div>
+<button class="reset" id="reset">다시 하기</button>
+<script>
+var N=100,win,tries,over;
+var grid=document.getElementById('grid'),msg=document.getElementById('msg');
+function init(){
+  win=Math.floor(Math.random()*N);tries=0;over=false;
+  grid.innerHTML='';msg.textContent='';
+  for(var i=0;i<N;i++){
+    var b=document.createElement('button');
+    b.className='c';b.textContent=i+1;b.dataset.i=i;
+    b.onclick=pick;grid.appendChild(b);
+  }
+}
+function pick(e){
+  var b=e.currentTarget,i=+b.dataset.i;
+  if(over||b.classList.contains('lose'))return;
+  tries++;
+  if(i===win){
+    b.className='c win';b.textContent='당첨';over=true;
+    msg.textContent=(i+1)+'번 당첨! ('+tries+'번째 도전)';
+  }else{
+    b.className='c lose';b.textContent='꽝';
+    msg.textContent='꽝, 남은 칸 '+(N-tries)+'개';
+  }
+}
+document.getElementById('reset').onclick=init;
+init();
+</script>
+</body>
+</html>
